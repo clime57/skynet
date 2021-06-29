@@ -180,9 +180,10 @@ end
 local header_tmp = {}
 
 local function gen_response(self, response, session)
-	return function(args)
+	return function(args, ud)
 		header_tmp.type = nil
 		header_tmp.session = session
+		header_tmp.ud = ud
 		local header = core.encode(self.__package, header_tmp)
 		if response then
 			local content = core.encode(response, args)
@@ -238,7 +239,7 @@ function host:attach(sp)
 			self.__session[session] = proto.response or true
 		end
 
-		if args then
+		if proto.request then
 			local content = core.encode(proto.request, args)
 			return core.pack(header ..  content)
 		else
